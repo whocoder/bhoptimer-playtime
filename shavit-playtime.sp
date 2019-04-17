@@ -185,7 +185,7 @@ public void SQL_Command_PlayTime_Callback(Database db, DBResultSet results, cons
 		results.FetchString(2, sAuthID, 32);
 		FormatSeconds(float(playtime), sPlayTime, 64, false);
 
-		Shavit_PrintToChat(client, "User %s %s has logged %s time on the server .", sName, sAuthID, sPlayTime);
+		Shavit_PrintToChat(client, "User %s %s has played for %s.", sName, sAuthID, sPlayTime);
 	}else{
 		Menu menu = new Menu(MenuHandler_PlayTime);
 		FormatSeconds(float(g_iTime[client]), sPlayTime, 64, false);
