@@ -1,5 +1,7 @@
 # bhoptimer-playtime
-Tracks player play-time using shavit's bhoptimer database and natives
+Tracks player play-time using shavit's bhoptimer database and natives.
+
+![example](https://i.imgur.com/XBksJvw.png)
 
 To use this plugin, you must modify the SQL database by adding a `playtime` column. To do this, execute this on the SQL server:
 ```sql
