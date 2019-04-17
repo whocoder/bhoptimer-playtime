@@ -5,3 +5,7 @@ To use this plugin, you must modify the SQL database by adding a `playtime` colu
 ```sql
 ALTER TABLE `users` ADD `playtime` INT NOT NULL DEFAULT '0' AFTER `points`;
 ```
+
+# To-Do
+* Add native to retrieve play-time
+* Add failsafes
