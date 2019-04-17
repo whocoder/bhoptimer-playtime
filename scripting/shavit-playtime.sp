@@ -127,7 +127,7 @@ public void SQL_UpdatePlayTime_Callback(Database db, DBResultSet results, const 
 }
 
 
-public ConCmd Command_Playtime(int client, int args){
+public Action Command_Playtime(int client, int args){
 	if((client == 0) || !IsClientConnected(client) || IsFakeClient(client) || g_hSQL == null)
 		return Plugin_Handled;
 
