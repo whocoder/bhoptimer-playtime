@@ -40,7 +40,7 @@ public Plugin myinfo = {
 	name = "[shavit] Playtime Recorder",
 	author = "whocodes",
 	description = "Playtime recorder for shavit's timer.",
-	version = "1.0",
+	version = "1.0.1",
 	url = "https://github.com/whocodes/shavit-playtime"
 }
 
@@ -171,6 +171,7 @@ public void SQL_Command_PlayTime_Callback(Database db, DBResultSet results, cons
 	char sName[MAX_NAME_LENGTH];
 	char sAuthID[32];
 	int playtime;
+	char sPlayTime[64];
 
 	if(results.RowCount == 1){
 		if(!results.FetchRow()){
@@ -182,11 +183,13 @@ public void SQL_Command_PlayTime_Callback(Database db, DBResultSet results, cons
 
 		results.FetchString(1, sName, MAX_NAME_LENGTH);
 		results.FetchString(2, sAuthID, 32);
+		FormatSeconds(float(playtime), sPlayTime, 64, false);
 
-		Shavit_PrintToChat(client, "User %s %s has played for %d seconds.", sName, sAuthID, playtime);
+		Shavit_PrintToChat(client, "User %s %s has logged %s time on the server .", sName, sAuthID, sPlayTime);
 	}else{
 		Menu menu = new Menu(MenuHandler_PlayTime);
-		menu.SetTitle("User Playtimes\nYour time: %d", g_iTime[client]);
+		FormatSeconds(float(g_iTime[client]), sPlayTime, 64, false);
+		menu.SetTitle("User Playtimes\nYour time: %s", sPlayTime);
 
 
 		while(results.FetchRow()){
@@ -196,7 +199,9 @@ public void SQL_Command_PlayTime_Callback(Database db, DBResultSet results, cons
 			results.FetchString(1, sName, MAX_NAME_LENGTH);
 			results.FetchString(2, sAuthID, 32);
 
-			FormatEx(sMenuItem, 128, "%s (%d)", sName, playtime);
+			FormatSeconds(float(playtime), sPlayTime, 64, false);
+			FormatEx(sMenuItem, 128, "%s (%s)", sName, sPlayTime);
+
 
 			menu.AddItem(sAuthID, sMenuItem, (g_bStats ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED));
 		}
@@ -216,7 +221,6 @@ public int MenuHandler_PlayTime(Menu menu, MenuAction action, int param1, int pa
 		char sAuthID[32];
 		menu.GetItem(param2, sAuthID, 32);
 
-		PrintToServer("Param1 %d ; Param2 %d ; Param2 (s) %s", param1, param2, sAuthID);
 		Shavit_OpenStatsMenu(param1, sAuthID);
 	}else if(action == MenuAction_End){
 		delete menu;
