@@ -58,6 +58,8 @@ public void OnPluginStart(){
 	RegConsoleCmd("sm_playtime", Command_Playtime, "Shows the playtime for all users, or a specific user (if arguments provided). Usage: sm_playtime [target]");
 
 	g_CVPlaytimeLimit = CreateConVar("shavit_playtime_limit", "100", "Sets the limit of user playtimes to retrieve for sm_playtime", 0, true, 1.0, false);
+
+	LoadTranslations("shavit-playtime.phrases");
 }
 
 public void Shavit_OnDatabaseLoaded(){
@@ -142,7 +144,7 @@ public Action Command_Playtime(int client, int args){
 		int target = FindTarget(client, sArgs, true, false);
 
 		if((target == 0) || !IsClientConnected(target)){
-			Shavit_PrintToChat(client, "Could not find specified player: %s", sArgs);
+			Shavit_PrintToChat(client, "%T", "PlaytimeNotFound", client, sArgs);
 			return Plugin_Handled;
 		}
 
@@ -155,7 +157,7 @@ public Action Command_Playtime(int client, int args){
 			sAuthID);
 	}
 
-	Shavit_PrintToChat(client, "Loading playtime data...");
+	Shavit_PrintToChat(client, "%T", "LoadingPlaytime", client);
 	g_hSQL.Query(SQL_Command_PlayTime_Callback, sQuery, GetClientSerial(client), DBPrio_High);
 
 	return Plugin_Continue;
@@ -185,11 +187,11 @@ public void SQL_Command_PlayTime_Callback(Database db, DBResultSet results, cons
 		results.FetchString(2, sAuthID, 32);
 		FormatSeconds(float(playtime), sPlayTime, 64, false);
 
-		Shavit_PrintToChat(client, "User %s %s has played for %s.", sName, sAuthID, sPlayTime);
+		Shavit_PrintToChat(client, "%T", "UserHasPlayedFor", client, sName, sAuthID, sPlayTime);
 	}else{
 		Menu menu = new Menu(MenuHandler_PlayTime);
 		FormatSeconds(float(g_iTime[client]), sPlayTime, 64, false);
-		menu.SetTitle("User Playtimes\nYour time: %s", sPlayTime);
+		menu.SetTitle("%T\n%T", "UserPlaytimes", client, "YourPlayTime", client, sPlayTime);
 
 
 		while(results.FetchRow()){

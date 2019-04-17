@@ -8,5 +8,4 @@ ALTER TABLE `users` ADD `playtime` INT NOT NULL DEFAULT '0' AFTER `points`;
 
 # To-Do
 * Add native to retrieve play-time
-* Add translations
-* Add failsafes
+* Add some fail-safes

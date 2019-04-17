@@ -1,0 +1,27 @@
+"Phrases"
+{
+	// ---------- Commands ---------- //
+	"PlaytimeNotFound"
+	{
+    "#format"   "{1:s}"
+		"en"		    "Could not find playtime with arguments: {1}"
+	}
+	"LoadingPlaytime"
+	{
+		"en"		    "Loading play time(s)..."
+	}
+  "UserPlaytimes"
+  {
+    "en"        "Player Playtimes"
+  }
+  "YourPlayTime"
+  {
+		"#format"		"{1:s}"
+    "en"        "Your time: {1}"
+  }
+	"UserHasPlayedFor"
+	{
+		"#format"	"{1:s},{2:s},{3:s}"
+		"en"			"User {1} {2} has played for {3}."
+	}
+}
