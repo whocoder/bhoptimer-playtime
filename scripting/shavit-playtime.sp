@@ -40,7 +40,7 @@ public Plugin myinfo = {
 	name = "[shavit] Playtime Recorder",
 	author = "whocodes",
 	description = "Playtime recorder for shavit's timer.",
-	version = "1.0.1",
+	version = "1.0.2",
 	url = "https://github.com/whocodes/shavit-playtime"
 }
 
@@ -114,8 +114,6 @@ public void OnClientDisconnect(int client){
 	char sQuery[256];
 	FormatEx(sQuery, 256, "UPDATE %susers SET playtime = playtime + %d WHERE auth='%s';",
 		gS_MySQLPrefix,
-		gS_MySQLPrefix,
-		sAuthID,
 		RoundToFloor(GetEngineTime() - g_fJoinTime[client]),
 		sAuthID);
 	g_hSQL.Query(SQL_UpdatePlayTime_Callback, sQuery, GetClientSerial(client), DBPrio_High);
