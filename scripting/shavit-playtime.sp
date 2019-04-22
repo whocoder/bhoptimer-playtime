@@ -40,7 +40,7 @@ public Plugin myinfo = {
 	name = "[shavit] Playtime Recorder",
 	author = "whocodes",
 	description = "Playtime recorder for shavit's timer.",
-	version = "1.0.2",
+	version = "1.0.3",
 	url = "https://github.com/whocodes/shavit-playtime"
 }
 
@@ -64,7 +64,28 @@ public void OnPluginStart(){
 
 public void Shavit_OnDatabaseLoaded(){
 	g_hSQL = Shavit_GetDatabase();
-	FormatEx(gS_MySQLPrefix, 32, "");
+	SQL_SetPrefix();
+}
+
+void SQL_SetPrefix(){
+	char sFile[PLATFORM_MAX_PATH];
+	BuildPath(Path_SM, sFile, PLATFORM_MAX_PATH, "configs/shavit-prefix.txt");
+	
+	File fFile = OpenFile(sFile, "r");
+
+	if(fFile == null)
+		SetFailState("Cannot open \"configs/shavit-prefix.txt\". Make sure this file exists and that the server has read permissions to it.");
+	
+	char sLine[PLATFORM_MAX_PATH*2];
+
+	while(fFile.ReadLine(sLine, PLATFORM_MAX_PATH*2)){
+		TrimString(sLine);
+		strcopy(gS_MySQLPrefix, 32, sLine);
+
+		break;
+	}
+
+	delete fFile;
 }
 
 public void OnClientPutInServer(int client){
@@ -133,7 +154,9 @@ public Action Command_Playtime(int client, int args){
 
 	char sQuery[256];
 	if(args == 0){
-		FormatEx(sQuery, 256, "SELECT playtime, name, auth FROM %susers LIMIT 0, %d;", gS_MySQLPrefix, g_CVPlaytimeLimit.IntValue);
+		FormatEx(sQuery, 256, "SELECT playtime, name, auth FROM %susers ORDER BY playtime DESC LIMIT 0, %d;", 
+			gS_MySQLPrefix, 
+			g_CVPlaytimeLimit.IntValue);
 	}else{
 		char sArgs[64];
 		GetCmdArgString(sArgs, 64);
@@ -150,7 +173,7 @@ public Action Command_Playtime(int client, int args){
 		char sAuthID[32];
 		GetClientAuthId(target, AuthId_Steam3, sAuthID, 32);
 
-		FormatEx(sQuery, 256, "SELECT playtime, name, auth FROM %susers WHERE auth = '%s' LIMIT 0, 100;",
+		FormatEx(sQuery, 256, "SELECT playtime, name, auth FROM %susers WHERE auth = '%s';",
 			gS_MySQLPrefix,
 			sAuthID);
 	}
