@@ -40,7 +40,7 @@ public Plugin myinfo = {
 	name = "[shavit] Playtime Recorder",
 	author = "whocodes",
 	description = "Playtime recorder for shavit's timer.",
-	version = "1.0.2",
+	version = "1.0.4",
 	url = "https://github.com/whocodes/shavit-playtime"
 }
 
@@ -158,7 +158,7 @@ public Action Command_Playtime(int client, int args){
 	Shavit_PrintToChat(client, "%T", "LoadingPlaytime", client);
 	g_hSQL.Query(SQL_Command_PlayTime_Callback, sQuery, GetClientSerial(client), DBPrio_High);
 
-	return Plugin_Continue;
+	return Plugin_Handled;
 }
 
 public void SQL_Command_PlayTime_Callback(Database db, DBResultSet results, const char[] error, any data){
