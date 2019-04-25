@@ -39,8 +39,8 @@ ConVar g_CVPlaytimeLimit = null;
 public Plugin myinfo = {
 	name = "[shavit] Playtime Recorder",
 	author = "whocodes",
-	description = "Playtime recorder for shavit's timer.",
-	version = "1.0.4",
+	description = "Playtime tracker for shavit's timer.",
+	version = "1.0.5",
 	url = "https://github.com/whocodes/shavit-playtime"
 }
 
@@ -206,12 +206,12 @@ public void SQL_Command_PlayTime_Callback(Database db, DBResultSet results, cons
 
 		results.FetchString(1, sName, MAX_NAME_LENGTH);
 		results.FetchString(2, sAuthID, 32);
-		FormatSeconds(float(playtime), sPlayTime, 64, false);
+		FormatPlayTime(playtime, sPlayTime, 64);
 
 		Shavit_PrintToChat(client, "%T", "UserHasPlayedFor", client, sName, sAuthID, sPlayTime);
 	}else{
 		Menu menu = new Menu(MenuHandler_PlayTime);
-		FormatSeconds(float(g_iTime[client]), sPlayTime, 64, false);
+		FormatPlayTime(g_iTime[client], sPlayTime, 64);
 		menu.SetTitle("%T\n%T", "UserPlaytimes", client, "YourPlayTime", client, sPlayTime);
 
 
@@ -222,7 +222,7 @@ public void SQL_Command_PlayTime_Callback(Database db, DBResultSet results, cons
 			results.FetchString(1, sName, MAX_NAME_LENGTH);
 			results.FetchString(2, sAuthID, 32);
 
-			FormatSeconds(float(playtime), sPlayTime, 64, false);
+			FormatPlayTime(playtime, sPlayTime, 64);
 			FormatEx(sMenuItem, 128, "%s (%s)", sName, sPlayTime);
 
 
@@ -250,4 +250,32 @@ public int MenuHandler_PlayTime(Menu menu, MenuAction action, int param1, int pa
 	}
 
 	return 0;
+}
+
+
+void FormatPlayTime(int time, char[] newtime, int newtimesize){
+	int iSeconds = (time % 60);
+
+	if(time < 60.0){
+		FormatEx(newtime, newtimesize, "%ds", iSeconds);
+	}else{
+		int iMinutes = (time / 60);
+
+		if(time < 3600.0){
+			FormatEx(newtime, newtimesize, "%dm%s%ds",
+				iMinutes,
+				((iSeconds < 10) ? "0" : ""),
+				iSeconds);
+		}else{
+			iMinutes %= 60;
+			int iHours = (time / 3600);
+
+			FormatEx(newtime, newtimesize, "%dh%s%dm%s%ds",
+				iHours,
+				((iMinutes < 10) ? "0" : ""),
+				iMinutes,
+				((iSeconds < 10) ? "0" : ""),
+				iSeconds);
+		}
+	}
 }
