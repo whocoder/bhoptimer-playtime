@@ -28,10 +28,17 @@ before_script:
 
 script:
   - ./build-env/addons/sourcemod/scripting/compile.sh
-#
-#after_success:
-#  - mkdir finished
-#  - cp -rv build-env/addons/sourcemod/scripting/compiled/. finished
-#  - rm -r build-env
-#  - zip -9rq $TRAVIS_COMMIT.zip addons
-#  - find $TRAVIS_COMMIT.zip -type f -exec curl --user $FTPUSER:$FTPPASS --ftp-create-dirs -T {} ftp://$FTPPATH/{} \;
+
+before_deploy:
+  - mkdir addons/sourcemod/plugins
+  - cp -rv build-env/addons/sourcemod/scripting/compiled/. addons/sourcemod/plugins
+  - rm -r build-env
+  - zip -9rq release-$TRAVIS_COMMIT.zip addons
+
+deploy:
+  provider: releases
+  api_key: "GITHUB OAUTH TOKEN"
+  file: "release-$TRAVIS_COMMIT.zip"
+  skip_cleanup: true
+  on:
+    tags: true
