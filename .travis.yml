@@ -15,7 +15,7 @@ install:
   - cd build-env
   - SMPACKAGE="http://sourcemod.net/latest.php?os=linux&version=${SOURCEMOD_VERSION}"
   - wget $SMPACKAGE
-  - tar -xzvf ($basename $SMPACKAGE)
+  - tar -xzvf $(basename $SMPACKAGE)
   - cd addons/sourcemod/scripting/include
   - wget https://raw.githubusercontent.com/shavitush/bhoptimer/master/addons/sourcemod/scripting/include/shavit.inc
   - chmod 777 shavit.inc
