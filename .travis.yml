@@ -5,8 +5,7 @@ addons:
         - lib32stdc++6
 
 env:
-  global:
-    - SOURCEMOD_VERSION=1.10
+  - SOURCEMOD_VERSION=1.10
 
 before_install:
   - mkdir build-env
@@ -28,7 +27,7 @@ before_script:
   - chmod +rx build-env/addons/sourcemod/scripting/compile.sh
 
 script:
-  - ./compile.sh
+  - ./build-env/addons/sourcemod/scripting/compile.sh
 #
 #after_success:
 #  - mkdir finished
