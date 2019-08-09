@@ -98,11 +98,8 @@ public void OnClientPutInServer(int client){
 }
 
 void UpdateClientCache(int client){
-	char sAuthID[32];
-	GetClientAuthId(client, AuthId_Steam3, sAuthID, 32);
-
 	char sQuery[256];
-	FormatEx(sQuery, 256, "SELECT playtime FROM %susers WHERE auth = '%s';", gS_MySQLPrefix, sAuthID);
+	FormatEx(sQuery, 256, "SELECT playtime FROM %susers WHERE auth = %d;", gS_MySQLPrefix, GetSteamAccountID(client));
 	g_hSQL.Query(SQL_UpdateCache_Callback, sQuery, GetClientSerial(client), DBPrio_High);
 }
 
@@ -129,14 +126,11 @@ public void OnClientDisconnect(int client){
 	if((client == 0) || !IsClientConnected(client) || IsFakeClient(client) || g_hSQL == null)
 		return;
 
-	char sAuthID[32];
-	GetClientAuthId(client, AuthId_Steam3, sAuthID, 32);
-
 	char sQuery[256];
-	FormatEx(sQuery, 256, "UPDATE %susers SET playtime = playtime + %d WHERE auth='%s';",
+	FormatEx(sQuery, 256, "UPDATE %susers SET playtime = playtime + %d WHERE auth = %d;",
 		gS_MySQLPrefix,
 		RoundToFloor(GetEngineTime() - g_fJoinTime[client]),
-		sAuthID);
+		GetSteamAccountID(client));
 	g_hSQL.Query(SQL_UpdatePlayTime_Callback, sQuery, GetClientSerial(client), DBPrio_High);
 }
 
@@ -165,17 +159,18 @@ public Action Command_Playtime(int client, int args){
 		int target = FindTarget(client, sArgs, true, false);
 
 		if((target == 0) || !IsClientConnected(target)){
-			Shavit_PrintToChat(client, "%T", "PlaytimeNotFound", client, sArgs);
+			if(client == 0){
+				PrintToServer("Playtime not found (args: %s", sArgs);
+			}else{
+				Shavit_PrintToChat(client, "%T", "PlaytimeNotFound", client, sArgs);
+			}
+			
 			return Plugin_Handled;
 		}
 
-
-		char sAuthID[32];
-		GetClientAuthId(target, AuthId_Steam3, sAuthID, 32);
-
-		FormatEx(sQuery, 256, "SELECT playtime, name, auth FROM %susers WHERE auth = '%s';",
+		FormatEx(sQuery, 256, "SELECT playtime, name, auth FROM %susers WHERE auth = %d;",
 			gS_MySQLPrefix,
-			sAuthID);
+			GetSteamAccountID(target));
 	}
 
 	Shavit_PrintToChat(client, "%T", "LoadingPlaytime", client);
@@ -192,7 +187,7 @@ public void SQL_Command_PlayTime_Callback(Database db, DBResultSet results, cons
 
 	int client = GetClientFromSerial(data);
 	char sName[MAX_NAME_LENGTH];
-	char sAuthID[32];
+	int iAuthID;
 	int playtime;
 	char sPlayTime[64];
 
@@ -205,10 +200,15 @@ public void SQL_Command_PlayTime_Callback(Database db, DBResultSet results, cons
 		playtime = results.FetchInt(0);
 
 		results.FetchString(1, sName, MAX_NAME_LENGTH);
-		results.FetchString(2, sAuthID, 32);
+		iAuthID = results.FetchInt(2);
 		FormatPlayTime(playtime, sPlayTime, 64);
 
-		Shavit_PrintToChat(client, "%T", "UserHasPlayedFor", client, sName, sAuthID, sPlayTime);
+		if(client == 0){
+			PrintToServer("User %s (%d) has played for %s", sName, iAuthID, sPlayTime);
+		}else{
+			Shavit_PrintToChat(client, "%T", "UserHasPlayedFor", client, sName, iAuthID, sPlayTime);
+		}
+		
 	}else{
 		Menu menu = new Menu(MenuHandler_PlayTime);
 		FormatPlayTime(g_iTime[client], sPlayTime, 64);
@@ -220,12 +220,15 @@ public void SQL_Command_PlayTime_Callback(Database db, DBResultSet results, cons
 
 			playtime = results.FetchInt(0);
 			results.FetchString(1, sName, MAX_NAME_LENGTH);
-			results.FetchString(2, sAuthID, 32);
+			iAuthID = results.FetchInt(2);
 
 			FormatPlayTime(playtime, sPlayTime, 64);
 			FormatEx(sMenuItem, 128, "%s (%s)", sName, sPlayTime);
 
+			
 
+			char sAuthID[32];
+			IntToString(iAuthID, sAuthID, 32);
 			menu.AddItem(sAuthID, sMenuItem, (g_bStats ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED));
 		}
 
@@ -244,7 +247,7 @@ public int MenuHandler_PlayTime(Menu menu, MenuAction action, int param1, int pa
 		char sAuthID[32];
 		menu.GetItem(param2, sAuthID, 32);
 
-		Shavit_OpenStatsMenu(param1, sAuthID);
+		Shavit_OpenStatsMenu(param1, StringToInt(sAuthID));
 	}else if(action == MenuAction_End){
 		delete menu;
 	}
@@ -279,3 +282,4 @@ void FormatPlayTime(int time, char[] newtime, int newtimesize){
 		}
 	}
 }
+
