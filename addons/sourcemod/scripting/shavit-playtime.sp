@@ -126,6 +126,9 @@ public void OnClientDisconnect(int client){
 	if((client == 0) || !IsClientConnected(client) || IsFakeClient(client) || g_hSQL == null)
 		return;
 
+	if(g_fJoinTime[client] < 1)
+		return;
+
 	char sQuery[256];
 	FormatEx(sQuery, 256, "UPDATE %susers SET playtime = playtime + %d WHERE auth = %d;",
 		gS_MySQLPrefix,
