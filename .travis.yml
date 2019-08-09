@@ -38,7 +38,7 @@ before_deploy:
   - git config --local user.name "whocodes"
   - git config --local user.email "admin@whocodes.tech"
   - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
-  - git tag $TRAVIS_TAG
+  - git tag 1.1.0
 
 deploy:
   provider: releases
