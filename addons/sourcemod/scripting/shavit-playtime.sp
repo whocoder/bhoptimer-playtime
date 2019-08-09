@@ -40,7 +40,7 @@ public Plugin myinfo = {
 	name = "[shavit] Playtime Recorder",
 	author = "whocodes",
 	description = "Playtime tracker for shavit's timer.",
-	version = "1.0.5",
+	version = "1.1.0",
 	url = "https://github.com/whocodes/shavit-playtime"
 }
 
