@@ -37,8 +37,6 @@ before_deploy:
 
 deploy:
   provider: releases
-  api_key: "GITHUB OAUTH TOKEN"
+  api_key: "$APIKEY"
   file: "release-$TRAVIS_COMMIT.zip"
   skip_cleanup: true
-  on:
-    tags: true
