@@ -44,5 +44,5 @@ deploy:
   provider: releases
   api_key: "$APIKEY"
   file: "release-$TRAVIS_COMMIT.zip"
-  name: "Automatic Release"
+  name: Automatic Release $(date +'%m-%d-%Y %R')
   skip_cleanup: true
