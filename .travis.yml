@@ -1,0 +1,38 @@
+sudo: false
+
+addons:
+    apt_packages:
+        - lib32stdc++6
+
+env:
+  global:
+    - SOURCEMOD_VERSION=1.10
+
+before_install:
+  - mkdir build-env
+
+install:
+  - cd build-env
+  - SMPACKAGE="http://sourcemod.net/latest.php?os=linux&version=${SOURCEMOD_VERSION}"
+  - wget $SMPACKAGE
+  - tar -xzvf ($basename $SMPACKAGE)
+  - cd addons/sourcemod/scripting/include
+  - wget https://raw.githubusercontent.com/shavitush/bhoptimer/master/addons/sourcemod/scripting/include/shavit.inc
+  - chmod 777 shavit.inc
+  - cd ../../../../../
+  - find build-env/addons/sourcemod/scripting/ -name "*.sp" -type f -delete
+  - cp -rv addons/sourcemod/scripting/. build-env/addons/sourcemod/scripting/
+
+before_script:
+  - chmod +rx build-env/addons/sourcemod/scripting/spcomp
+  - chmod +rx build-env/addons/sourcemod/scripting/compile.sh
+
+script:
+  - ./compile.sh
+#
+#after_success:
+#  - mkdir finished
+#  - cp -rv build-env/addons/sourcemod/scripting/compiled/. finished
+#  - rm -r build-env
+#  - zip -9rq $TRAVIS_COMMIT.zip addons
+#  - find $TRAVIS_COMMIT.zip -type f -exec curl --user $FTPUSER:$FTPPASS --ftp-create-dirs -T {} ftp://$FTPPATH/{} \;
