@@ -10,6 +10,5 @@ To use this plugin, you must modify the SQL database by adding a `playtime` colu
 ALTER TABLE `users` ADD `playtime` INT NOT NULL DEFAULT '0' AFTER `points`;
 ```
 
-# To-Do
-* Add native to retrieve play-time
-* Add some fail-safes
+# Notes
+This does not account for a server crash. Playtime is updated when a user disconnects; if the disconnect event is not fired, the playtime will not be updated for the session.
